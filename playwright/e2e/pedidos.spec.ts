@@ -2,19 +2,31 @@ import { test, expect } from '@playwright/test'
 
 import { generateOrderCode } from '../support/helpers'
 
-import { OrderLockupPage } from '../support/pages/OrderLockupPage'
+import { Navbar } from '../support/components/Navbar'
+
+import { LandingPage } from '../support/pages/LandingPage'
+
+import { OrderLockupPage, type OrderDetails } from '../support/pages/OrderLockupPage'
 
 /// AAA - Arrange, Act, Assert
 
 test.describe('Consulta de Pedido', () => {
 
-  test.beforeEach(async ({ page }) => {
-    // Arrange
-    await page.goto('http://localhost:5173/')
-    await expect(page.getByTestId('hero-section').getByRole('heading')).toContainText('Velô Sprint')
+  let orderLockupPage: OrderLockupPage
 
-    await page.getByRole('link', { name: 'Consultar Pedido' }).click()
-    await expect(page.getByRole('heading')).toContainText('Consultar Pedido')
+  test.beforeEach(async ({ page }) => {
+    // Arrange - Landing
+    await new LandingPage(page).goto()
+      
+    //Arrange - Navegação via componente compartilhado
+    await new Navbar(page).orderLockupLink()
+
+    orderLockupPage = new OrderLockupPage(page)
+
+
+    //Assert - Confirma que está na página correta
+    orderLockupPage.validateOrderLoaded()
+
   })
 
   test('deve consultar um pedido aprovado', async ({ page }) => {
@@ -22,7 +34,7 @@ test.describe('Consulta de Pedido', () => {
     // Test Data
     const order = {
       number: 'VLO-T2VAZ8',
-      status: 'APROVADO' as const,
+      status: 'APROVADO',
       color: 'Lunar White',
       wheels: 'aero Wheels',
       customer: {
@@ -30,42 +42,13 @@ test.describe('Consulta de Pedido', () => {
         email: 'ivone@velo.dev'
       },
       payment: 'À Vista'
-    }
+    } satisfies OrderDetails
 
-    // Act  
-    const orderLockupPage = new OrderLockupPage(page)
+    // Act      const orderLockupPage = new OrderLockupPage(page)
     await orderLockupPage.searchOrder(order.number)
 
     // Assert
-    await expect(page.getByTestId(`order-result-${order.number}`)).toMatchAriaSnapshot(`
-      - img
-      - paragraph: Pedido
-      - paragraph: ${order.number}
-      - status:
-        - img
-        - text: ${order.status}
-      - img "Velô Sprint"
-      - paragraph: Modelo
-      - paragraph: Velô Sprint
-      - paragraph: Cor
-      - paragraph: ${order.color}
-      - paragraph: Interior
-      - paragraph: cream
-      - paragraph: Rodas
-      - paragraph: ${order.wheels}
-      - heading "Dados do Cliente" [level=4]
-      - paragraph: Nome
-      - paragraph: ${order.customer.name}
-      - paragraph: Email
-      - paragraph: ${order.customer.email}
-      - paragraph: Loja de Retirada
-      - paragraph
-      - paragraph: Data do Pedido
-      - paragraph: /\\d+\\/\\d+\\/\\d+/
-      - heading "Pagamento" [level=4]
-      - paragraph: ${order.payment}
-      - paragraph: /R\\$ \\d+\\.\\d+,\\d+/
-      `);
+    await orderLockupPage.validateOrderDetails(order)
 
     // Validação do badge de status encapsulada no Page Object
     await orderLockupPage.validateStatusBadge(order.status)
@@ -77,7 +60,7 @@ test.describe('Consulta de Pedido', () => {
     // Test Data
     const order = {
       number: 'VLO-L0QXYI',
-      status: 'REPROVADO' as const,
+      status: 'REPROVADO',
       color: 'Glacier Blue',
       wheels: 'sport Wheels',
       customer: {
@@ -85,42 +68,13 @@ test.describe('Consulta de Pedido', () => {
         email: 'steve@apple.com'
       },
       payment: 'À Vista'
-    }
+    } satisfies OrderDetails
 
     // Act  
-    const orderLockupPage = new OrderLockupPage(page)
     await orderLockupPage.searchOrder(order.number)
 
     // Assert
-    await expect(page.getByTestId(`order-result-${order.number}`)).toMatchAriaSnapshot(`
-      - img
-      - paragraph: Pedido
-      - paragraph: ${order.number}
-      - status:
-        - img
-        - text: ${order.status}
-      - img "Velô Sprint"
-      - paragraph: Modelo
-      - paragraph: Velô Sprint
-      - paragraph: Cor
-      - paragraph: ${order.color}
-      - paragraph: Interior
-      - paragraph: cream
-      - paragraph: Rodas
-      - paragraph: ${order.wheels}
-      - heading "Dados do Cliente" [level=4]
-      - paragraph: Nome
-      - paragraph: ${order.customer.name}
-      - paragraph: Email
-      - paragraph: ${order.customer.email}
-      - paragraph: Loja de Retirada
-      - paragraph
-      - paragraph: Data do Pedido
-      - paragraph: /\\d+\\/\\d+\\/\\d+/
-      - heading "Pagamento" [level=4]
-      - paragraph: ${order.payment}
-      - paragraph: /R\\$ \\d+\\.\\d+,\\d+/
-      `);
+    await orderLockupPage.validateOrderDetails(order)
 
     // Validação do badge de status encapsulada no Page Object
     await orderLockupPage.validateStatusBadge(order.status)
@@ -131,7 +85,7 @@ test.describe('Consulta de Pedido', () => {
     // Test Data
     const order = {
       number: 'VLO-9D4MAY',
-      status: 'EM_ANALISE' as const,
+      status: 'EM_ANALISE',
       color: 'Midnight Black',
       wheels: 'aero Wheels',
       customer: {
@@ -139,42 +93,13 @@ test.describe('Consulta de Pedido', () => {
         email: 'Ana@gmail.com'
       },
       payment: 'À Vista'
-    }
+    } satisfies OrderDetails
 
     // Act  
-    const orderLockupPage = new OrderLockupPage(page)
     await orderLockupPage.searchOrder(order.number)
 
     // Assert
-    await expect(page.getByTestId(`order-result-${order.number}`)).toMatchAriaSnapshot(`
-      - img
-      - paragraph: Pedido
-      - paragraph: ${order.number}
-      - status:
-        - img
-        - text: ${order.status}
-      - img "Velô Sprint"
-      - paragraph: Modelo
-      - paragraph: Velô Sprint
-      - paragraph: Cor
-      - paragraph: ${order.color}
-      - paragraph: Interior
-      - paragraph: cream
-      - paragraph: Rodas
-      - paragraph: ${order.wheels}
-      - heading "Dados do Cliente" [level=4]
-      - paragraph: Nome
-      - paragraph: ${order.customer.name}
-      - paragraph: Email
-      - paragraph: ${order.customer.email}
-      - paragraph: Loja de Retirada
-      - paragraph
-      - paragraph: Data do Pedido
-      - paragraph: /\\d+\\/\\d+\\/\\d+/
-      - heading "Pagamento" [level=4]
-      - paragraph: ${order.payment}
-      - paragraph: /R\\$ \\d+\\.\\d+,\\d+/
-      `);
+    await orderLockupPage.validateOrderDetails(order)
 
     // Validação do badge de status encapsulada no Page Object
     await orderLockupPage.validateStatusBadge(order.status)
@@ -184,7 +109,6 @@ test.describe('Consulta de Pedido', () => {
 
     const order = generateOrderCode()
 
-    const orderLockupPage = new OrderLockupPage(page)
     await orderLockupPage.searchOrder(order)
 
 
