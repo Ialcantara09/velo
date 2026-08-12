@@ -23,4 +23,10 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": "off",
     },
   },
+  {
+    files: ["playwright/**/*.{ts,tsx}"],
+    rules: {
+      semi: ["error", "never"],
+    },
+  },
 );
