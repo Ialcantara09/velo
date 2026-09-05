@@ -42,13 +42,13 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',
 
-      //tempo máximo para ações interativas como click(), fill()
-  //quando o valor é zero, ele herda o limite do timeout geral
-  actionTimeout: 5_000, //por padrão é zero
+    //tempo máximo para ações interativas como click(), fill()
+    //quando o valor é zero, ele herda o limite do timeout geral
+    actionTimeout: 5_000, //por padrão é zero
 
-  //tempo máximo para navegação como (goto(), reload(), waitUntil())
-  //quando o valor é zero, ele herda o valor do timeout geral
-  navigationTimeout: 10_000, //por padrão é zero
+    //tempo máximo para navegação como (goto(), reload(), waitUntil())
+    //quando o valor é zero, ele herda o valor do timeout geral
+    navigationTimeout: 10_000, //por padrão é zero
   },
 
 
@@ -56,7 +56,10 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        headless: false,
+      },
     },
 
     // {

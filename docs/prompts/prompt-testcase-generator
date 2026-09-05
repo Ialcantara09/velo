@@ -1,0 +1,388 @@
+Você é um Analista de Qualidade Sênior experiente em testes funcionais de software.
+
+Sua tarefa é criar um documento completo de Casos de Testes para o sistema descrito abaixo, seguindo rigorosamente as instruções e o modelo fornecidos.
+
+---
+
+## Informações do Sistema
+
+**Nome do sistema:** Velô Sprint - Configurador de Veículo Elétrico
+
+**Descrição:** Uma SPA (Single Page Application) web desenvolvida em React que permite aos usuários configurar, simular financiamentos e realizar a compra do veículo elétrico Velô Sprint. O sistema calcula preços dinamicamente com base nas escolhas do cliente e possui integração com uma API de análise de crédito para validar as compras.
+
+**Módulos/Funcionalidades a cobrir:** Landing Page, Configurador de Veículo, Checkout/Pedido, Análise de Crédito Automática, Confirmação, Consulta de Pedidos.
+
+**Perfis de usuário:** Cliente (Usuário Comum).
+
+**Regras de negócio relevantes:** 
+- Precificação: O carro possui um valor base de R$ 40.000. Adicionar rodas "Sport" custa +R$ 2.000. Adicionar "Precision Park" custa +R$ 5.500. Adicionar "Flux Capacitor" custa +R$ 5.000.
+- Juros de Financiamento: Se a opção for parcelada, o financiamento é travado em 12x com uma taxa fixa de juros compostos de 2% ao mês.
+- Análise de Crédito por Score: Score > 700 (Aprovado), 501 a 700 (Em análise), <= 500 (Reprovado).
+- Exceção na Aprovação de Crédito: Entrada >= 50% do valor total aprova automaticamente o pedido, ignorando o score de crédito.
+- Segurança de Dados: A consulta de pedidos requer o número do pedido (`order_number`).
+
+---
+
+## Escopo dos Testes
+
+Cobrir obrigatoriamente:
+- Testes funcionais (blackbox)
+- Cenários positivos (fluxo feliz)
+- Cenários negativos (erros, dados inválidos, permissões negadas)
+- Validação de campos obrigatórios
+- Validação de regras de negócio
+- Fluxos principais e alternativos
+- Permissões e níveis de acesso por perfil de usuário
+
+Não incluir:
+- Testes de performance
+- Testes de carga ou estresse
+- Testes automatizados
+- Testes de segurança avançados
+
+---
+
+## Modelo de Caso de Teste
+
+Cada caso de teste deve seguir exatamente este formato:
+
+---
+
+### CT[NN] - [Nome descritivo do caso de teste]
+
+#### Objetivo
+[Descrição clara e objetiva do que está sendo validado.]
+
+#### Pré-Condições
+- [Condição 1]
+- [Condição 2]
+- [...]
+
+#### Passos
+
+| Id | Ação | Resultado Esperado |
+|----|------|--------------------|
+| 1  | [Ação do usuário] | [Comportamento esperado do sistema] |
+| 2  | [...] | [...] |
+
+#### Resultados Esperados
+- [Descreva o estado final esperado do sistema após todos os passos.]
+
+#### Critérios de Aceitação
+- [Critério objetivo 1]
+- [Critério objetivo 2]
+- [...]
+
+---
+
+## Instruções de Geração
+
+1. Numere os casos de teste sequencialmente: CT01, CT02, CT03...
+2. Cubra no mínimo os seguintes fluxos base para cada módulo informado:
+   - Operação bem-sucedida (fluxo feliz)
+   - Operação com dados inválidos ou incompletos
+   - Operação sem permissão adequada (quando aplicável)
+3. Inclua casos de teste para validação de campos obrigatórios.
+4. Inclua casos de teste para cada perfil de usuário listado, sempre que houver comportamentos distintos.
+5. Seja detalhado nos passos — cada ação deve ser clara o suficiente para que qualquer pessoa execute o teste sem dúvidas.
+6. Gere o resultado em formato Markdown, pronto para ser salvo em um arquivo `.md` dentro da pasta `docs/tests` do projeto.
+
+---
+
+## Casos de Teste Gerados
+
+### CT01 - Acessar a Landing Page e iniciar configuração
+
+#### Objetivo
+Validar que o usuário consegue acessar a página inicial do Velô Sprint e ser redirecionado corretamente para o Configurador de Veículo.
+
+#### Pré-Condições
+- O sistema deve estar online e acessível.
+- O usuário deve ter conexão com a internet.
+
+#### Passos
+
+| Id | Ação | Resultado Esperado |
+|----|------|--------------------|
+| 1  | Acessar a URL raiz do sistema. | A Landing Page é carregada corretamente, exibindo as informações iniciais do veículo. |
+| 2  | Clicar no botão "Configurar Agora" (ou equivalente). | O usuário é redirecionado para a página do Configurador de Veículo. |
+
+#### Resultados Esperados
+- O sistema carrega a Landing Page sem erros e o botão de ação direciona corretamente para a página de configuração.
+
+#### Critérios de Aceitação
+- A Landing Page deve ser exibida completamente.
+- O link/botão para o configurador deve funcionar sem erros de rota.
+
+---
+
+### CT02 - Configuração do Veículo - Valor Base
+
+#### Objetivo
+Validar que o configurador inicia com o valor base do veículo corretamente estabelecido.
+
+#### Pré-Condições
+- O usuário deve estar na página do Configurador de Veículo.
+
+#### Passos
+
+| Id | Ação | Resultado Esperado |
+|----|------|--------------------|
+| 1  | Observar o resumo de preço inicial sem nenhum opcional selecionado. | O valor total exibido deve ser de R$ 40.000. |
+
+#### Resultados Esperados
+- O preço base do veículo é carregado e exibido como R$ 40.000.
+
+#### Critérios de Aceitação
+- O valor inicial do veículo exibido no resumo deve ser de R$ 40.000 exatos.
+
+---
+
+### CT03 - Configuração do Veículo - Adição de Opcionais (Precificação)
+
+#### Objetivo
+Validar o cálculo dinâmico do preço total ao selecionar diferentes opcionais do veículo.
+
+#### Pré-Condições
+- O usuário deve estar na página do Configurador de Veículo.
+
+#### Passos
+
+| Id | Ação | Resultado Esperado |
+|----|------|--------------------|
+| 1  | Selecionar a opção de rodas "Sport". | O valor total é atualizado para R$ 42.000 (+R$ 2.000). |
+| 2  | Selecionar a opção "Precision Park". | O valor total é atualizado para R$ 47.500 (+R$ 5.500). |
+| 3  | Selecionar a opção "Flux Capacitor". | O valor total é atualizado para R$ 52.500 (+R$ 5.000). |
+| 4  | Desmarcar a opção de rodas "Sport". | O valor total retorna para R$ 50.500 (-R$ 2.000). |
+
+#### Resultados Esperados
+- O preço do veículo deve ser atualizado instantaneamente a cada seleção ou remoção de opcional, somando os valores corretamente ao preço base de R$ 40.000.
+
+#### Critérios de Aceitação
+- As rodas "Sport" devem adicionar R$ 2.000.
+- O "Precision Park" deve adicionar R$ 5.500.
+- O "Flux Capacitor" deve adicionar R$ 5.000.
+- O cálculo deve ser refeito corretamente ao remover um opcional.
+
+---
+
+### CT04 - Checkout - Validação de Campos Obrigatórios
+
+#### Objetivo
+Garantir que o sistema impeça o avanço do checkout caso os campos obrigatórios não sejam preenchidos.
+
+#### Pré-Condições
+- O usuário deve ter concluído a configuração do veículo e clicado em "Avançar para Checkout".
+
+#### Passos
+
+| Id | Ação | Resultado Esperado |
+|----|------|--------------------|
+| 1  | Deixar todos os campos do formulário de dados pessoais em branco. | - |
+| 2  | Clicar no botão "Finalizar Pedido" ou "Próximo". | O sistema exibe mensagens de erro indicando quais campos são obrigatórios. |
+| 3  | Preencher apenas o campo "Nome" e clicar em "Próximo". | O sistema remove o erro do campo "Nome", mas mantém os erros dos demais campos vazios. |
+
+#### Resultados Esperados
+- O sistema bloqueia a submissão do formulário de checkout e destaca visualmente os campos obrigatórios não preenchidos.
+
+#### Critérios de Aceitação
+- Mensagens de erro claras devem ser exibidas para cada campo obrigatório não preenchido (ex: CPF, Email, Telefone, etc).
+- O envio do formulário deve ser bloqueado.
+
+---
+
+### CT05 - Checkout - Simulação de Financiamento
+
+#### Objetivo
+Validar a regra de negócio de juros compostos de 2% ao mês em financiamentos travados em 12 parcelas.
+
+#### Pré-Condições
+- O usuário deve estar na etapa de pagamento do Checkout.
+- Valor total do veículo configurado (ex: R$ 40.000).
+
+#### Passos
+
+| Id | Ação | Resultado Esperado |
+|----|------|--------------------|
+| 1  | Inserir o valor de entrada de R$ 0,00. | O saldo a financiar é R$ 40.000. |
+| 2  | Selecionar a opção de pagamento parcelado (financiamento). | O sistema exibe o plano de pagamento em 12x. |
+| 3  | Verificar o valor da parcela calculado pelo sistema. | O valor da parcela deve refletir o cálculo de juros compostos de 2% ao mês sobre o saldo devedor por 12 meses (utilizando tabela Price ou equivalente da regra do sistema). |
+
+#### Resultados Esperados
+- O sistema deve calcular corretamente o valor das 12 parcelas aplicando a taxa de 2% ao mês sobre o valor financiado.
+
+#### Critérios de Aceitação
+- O financiamento deve ser fixado em 12 vezes.
+- A taxa de juros utilizada deve ser de exatamente 2% (compostos) ao mês.
+
+---
+
+### CT06 - Análise de Crédito - Aprovação Automática por Entrada >= 50%
+
+#### Objetivo
+Validar que pedidos com entrada igual ou superior a 50% do valor total são aprovados automaticamente, ignorando o Score de crédito.
+
+#### Pré-Condições
+- O usuário deve estar na etapa de pagamento do Checkout.
+- Veículo configurado no valor de R$ 40.000.
+- Uma API mock de crédito ou perfil de teste que retorne um Score baixo (ex: Score 300).
+
+#### Passos
+
+| Id | Ação | Resultado Esperado |
+|----|------|--------------------|
+| 1  | Inserir o valor de entrada de R$ 20.000 (50% do valor total). | O sistema aceita o valor de entrada. |
+| 2  | Preencher os demais dados e clicar em "Finalizar Pedido". | O sistema submete o pedido. |
+| 3  | Aguardar o processamento. | O sistema exibe a tela de Confirmação com status "Aprovado", mesmo com Score baixo. |
+
+#### Resultados Esperados
+- A regra de exceção é aplicada e o crédito é aprovado independentemente do Score do cliente.
+
+#### Critérios de Aceitação
+- Entradas >= 50% devem pular ou aprovar direto a análise de Score de crédito.
+
+---
+
+### CT07 - Análise de Crédito - Score > 700 (Aprovado)
+
+#### Objetivo
+Validar a aprovação de crédito para clientes com Score maior que 700.
+
+#### Pré-Condições
+- O usuário deve estar na etapa de pagamento do Checkout.
+- Valor de entrada menor que 50% do total.
+- O CPF/Dados do usuário de teste devem estar vinculados a um Score > 700 (ex: 750).
+
+#### Passos
+
+| Id | Ação | Resultado Esperado |
+|----|------|--------------------|
+| 1  | Preencher os dados de pagamento. | - |
+| 2  | Clicar em "Finalizar Pedido". | O sistema submete os dados para a API de crédito. |
+| 3  | Aguardar a resposta da API. | O sistema exibe a tela de Confirmação com o status "Aprovado" e exibe o número do pedido. |
+
+#### Resultados Esperados
+- O pedido é processado e aprovado com base no alto Score de crédito.
+
+#### Critérios de Aceitação
+- Clientes com Score > 700 devem ter seus pedidos aprovados automaticamente.
+
+---
+
+### CT08 - Análise de Crédito - Score 501 a 700 (Em análise)
+
+#### Objetivo
+Validar o fluxo para clientes com Score mediano, que requer análise manual.
+
+#### Pré-Condições
+- O usuário deve estar na etapa de pagamento do Checkout.
+- Valor de entrada menor que 50% do total.
+- O CPF/Dados do usuário de teste devem estar vinculados a um Score entre 501 e 700 (ex: 600).
+
+#### Passos
+
+| Id | Ação | Resultado Esperado |
+|----|------|--------------------|
+| 1  | Clicar em "Finalizar Pedido". | O sistema submete os dados para a API de crédito. |
+| 2  | Aguardar a resposta da API. | O sistema exibe a tela de Confirmação com o status "Em análise" e informa que a equipe entrará em contato. Exibe o número do pedido. |
+
+#### Resultados Esperados
+- O pedido é registrado, mas fica com status pendente ("Em análise").
+
+#### Critérios de Aceitação
+- Clientes com Score entre 501 e 700 não são nem aprovados nem reprovados imediatamente.
+
+---
+
+### CT09 - Análise de Crédito - Score <= 500 (Reprovado)
+
+#### Objetivo
+Validar a recusa automática de crédito para clientes com Score baixo.
+
+#### Pré-Condições
+- O usuário deve estar na etapa de pagamento do Checkout.
+- Valor de entrada menor que 50% do total.
+- O CPF/Dados do usuário de teste devem estar vinculados a um Score <= 500 (ex: 450).
+
+#### Passos
+
+| Id | Ação | Resultado Esperado |
+|----|------|--------------------|
+| 1  | Clicar em "Finalizar Pedido". | O sistema submete os dados para a API de crédito. |
+| 2  | Aguardar a resposta da API. | O sistema exibe uma tela ou modal informando que o crédito foi "Reprovado" e sugere aumentar o valor da entrada ou tentar outra forma de pagamento. |
+
+#### Resultados Esperados
+- O pedido é negado devido ao risco de crédito.
+
+#### Critérios de Aceitação
+- Clientes com Score <= 500 devem ser reprovados se a entrada for menor que 50%.
+
+---
+
+### CT10 - Consulta de Pedidos - Sucesso
+
+#### Objetivo
+Validar a funcionalidade de busca e visualização do status de um pedido existente usando seu número.
+
+#### Pré-Condições
+- O usuário deve ter o número de um pedido previamente criado (ex: "PED-12345").
+- O usuário deve estar na página "Consulta de Pedidos".
+
+#### Passos
+
+| Id | Ação | Resultado Esperado |
+|----|------|--------------------|
+| 1  | Inserir o número do pedido ("PED-12345") no campo de busca. | O campo recebe a entrada corretamente. |
+| 2  | Clicar no botão "Consultar". | O sistema realiza a busca e exibe os detalhes do pedido (status, veículo, opcionais, valor total). |
+
+#### Resultados Esperados
+- O sistema retorna os dados corretos correspondentes ao número de pedido fornecido.
+
+#### Critérios de Aceitação
+- A consulta só deve retornar dados se o número exato do pedido for fornecido (segurança de dados).
+
+---
+
+### CT11 - Consulta de Pedidos - Número Inexistente
+
+#### Objetivo
+Garantir que o sistema lide graciosamente quando um usuário tenta consultar um número de pedido que não existe.
+
+#### Pré-Condições
+- O usuário deve estar na página "Consulta de Pedidos".
+
+#### Passos
+
+| Id | Ação | Resultado Esperado |
+|----|------|--------------------|
+| 1  | Inserir um número de pedido inválido (ex: "PED-00000"). | - |
+| 2  | Clicar em "Consultar". | O sistema exibe uma mensagem amigável indicando "Pedido não encontrado". |
+
+#### Resultados Esperados
+- O sistema não quebra e fornece feedback claro ao usuário de que o pedido não foi localizado.
+
+#### Critérios de Aceitação
+- Exibição de mensagem de erro amigável para pedido não encontrado.
+
+---
+
+### CT12 - Consulta de Pedidos - Campo Vazio
+
+#### Objetivo
+Validar que não é possível realizar uma consulta sem informar o número do pedido.
+
+#### Pré-Condições
+- O usuário deve estar na página "Consulta de Pedidos".
+
+#### Passos
+
+| Id | Ação | Resultado Esperado |
+|----|------|--------------------|
+| 1  | Deixar o campo de número do pedido vazio. | - |
+| 2  | Clicar em "Consultar". | O sistema impede a busca e exibe um aviso de que o campo é obrigatório. |
+
+#### Resultados Esperados
+- Nenhuma requisição desnecessária é feita à API e o usuário é instruído a preencher o campo.
+
+#### Critérios de Aceitação
+- O campo `order_number` deve ser tratado como obrigatório na tela de consulta.
