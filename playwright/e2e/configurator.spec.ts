@@ -1,4 +1,4 @@
-import { test, expect } from '../support/fixtures'
+import { test } from '../support/fixtures'
 
 
 test.describe('Configuração do Veículo', () => {
@@ -31,33 +31,26 @@ test.describe('Configuração do Veículo', () => {
     await app.configurator.expectCarImageSrc('/src/assets/glacier-blue-aero-wheels.png')
   })
 
-  
-  test('deve atualizar o preço incrementalmente e ir ao checkout com estado base', async ({ page }) => {
-      // Arrange
-      await page.goto('/configure')
-      const price = page.getByTestId('total-price')
-      await expect(price).toHaveText('R$ 40.000,00')
-      const precisionPark = page.getByRole('checkbox', { name: 'Precision Park' })
-      const fluxCapacitor = page.getByRole('checkbox', { name: 'Flux Capacitor' }) 
-      // Passo 1
-      await precisionPark.check() 
-      await expect(price).toHaveText('R$ 45.500,00')
-      // Passo 2
-      await fluxCapacitor.check()
-      await expect(price).toHaveText('R$ 50.500,00')
-      // Passo 3
-      await precisionPark.uncheck()
-      await expect(precisionPark).not.toBeChecked()
-      await expect(fluxCapacitor).toBeChecked()
-      await expect(price).toHaveText('R$ 45.000,00')
-      // Passo 4
-      await fluxCapacitor.uncheck()
-      await expect(fluxCapacitor).not.toBeChecked()
-      await expect(price).toHaveText('R$ 40.000,00')
-      // Passo 5
-      await page.getByRole('button', { name: 'Monte o Seu' }).click()
-      await expect(page).toHaveURL(/\/order/)
-      await expect(page.getByTestId('summary-total-price')).toHaveText('R$ 40.000,00')
+  test('deve atualizar o preço ao marcar/desmarcar opcionais e persistir no checkout', async ({ app }) => {
+    await app.configurator.expectPrice('R$ 40.000,00')
+
+    await app.configurator.setOptional('Precision Park', true)
+    await app.configurator.expectPrice('R$ 45.500,00')
+
+    await app.configurator.setOptional('Flux Capacitor', true)
+    await app.configurator.expectPrice('R$ 50.500,00')
+
+    await app.configurator.setOptional('Precision Park', false)
+    await app.configurator.expectOptional('Precision Park', false)
+    await app.configurator.expectOptional('Flux Capacitor', true)
+    await app.configurator.expectPrice('R$ 45.000,00')
+
+    await app.configurator.setOptional('Flux Capacitor', false)
+    await app.configurator.expectOptional('Flux Capacitor', false)
+    await app.configurator.expectPrice('R$ 40.000,00')
+
+    await app.configurator.proceedToCheckout()
+    await app.configurator.expectCheckoutPrice('R$ 40.000,00')
   })
 
 })
